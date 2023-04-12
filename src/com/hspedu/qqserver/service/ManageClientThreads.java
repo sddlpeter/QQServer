@@ -31,4 +31,7 @@ public class ManageClientThreads {
         hm.remove(userId);
     }
 
+    public static HashMap<String, ServerConnectClientThread> getHashMap() {
+        return ManageClientThreads.hm;
+    }
 }
