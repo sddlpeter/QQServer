@@ -9,13 +9,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QQServer {
     private ServerSocket ss = null;
 
     // 创建一个集合，存储多个用户登录信息, 可以使用ConcurrentHashMap来替换，能保证高并发
     private static HashMap<String, User> validUsers = new HashMap<>();
+    private static ConcurrentHashMap<String, List<Message>> offLineDb = new ConcurrentHashMap<>();
 
     // 在静态代码块初始化validUsers
     static {
@@ -25,6 +29,14 @@ public class QQServer {
         validUsers.put("至尊宝", new User("至尊宝", "123456"));
         validUsers.put("紫霞仙子", new User("紫霞仙子", "123456"));
         validUsers.put("菩提老祖", new User("菩提老祖", "123456"));
+    }
+
+    public static void main(String[] args) {
+        new QQServer();
+    }
+
+    public static ConcurrentHashMap<String, List<Message>> getOffLineDb() {
+        return offLineDb;
     }
 
     private boolean checkUser(String userId, String password) {
@@ -71,6 +83,17 @@ public class QQServer {
 
                     // 把该线程对象放入到集合中
                     ManageClientThreads.addClientThread(u.getUserId(), serverConnectClientThread);
+
+                    // 用户上线，检查是否有离线消息库存，如果有则发送离线消息给这个刚登陆的用户
+                    if (offLineDb.containsKey(u.getUserId())) {
+                        ServerConnectClientThread scct = ManageClientThreads.getServerConnectClientThread(u.getUserId());
+                        ObjectOutputStream ooos = new ObjectOutputStream(scct.getSocket().getOutputStream());
+
+                        for (Message msg : offLineDb.get(u.getUserId())) {
+                            ooos.writeObject(msg);
+                            System.out.println("发消息给 " + u.getUserId());
+                        }
+                    }
 
 
                 } else { //登录失败
