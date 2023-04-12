@@ -64,6 +64,10 @@ public class ServerConnectClientThread extends Thread {
                         ObjectOutputStream oos = new ObjectOutputStream(serverConnectClientThread.getSocket().getOutputStream());
                         oos.writeObject(message); // 转发消息，提示如果客户不在线，可以保存到数据库，实现离线留言
                     }
+                } else if (message.getMsgType().equals(MessageType.MESSAGE_FILE_MES)) { //服务端拿到message之后，只需要转发给另外一个客户端
+                    ServerConnectClientThread serverConnectClientThread = ManageClientThreads.getServerConnectClientThread(message.getGetter());
+                    ObjectOutputStream oos = new ObjectOutputStream(serverConnectClientThread.getSocket().getOutputStream());
+                    oos.writeObject(message);
                 }
 
                 // 后面会使用message

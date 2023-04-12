@@ -42,7 +42,7 @@ public class QQServer {
         try {
             System.out.println("服务端在9999端口监听...");
             ss = new ServerSocket(9999);
-
+            new Thread(new SendNewsToAllService()).start();
 
             while (true) { // 当和某个客户端建连接后，会继续监听，因此循环
                 Socket socket = ss.accept();  // 服务端在这里监听，如果有客户端链接，就继续往下执行，否则就阻塞在这里...

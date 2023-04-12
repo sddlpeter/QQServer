@@ -10,6 +10,10 @@ public class Message implements Serializable {
     private String content;
     private String sentTime;
     private String msgType; //消息类型【可以在接口中定义消息类型】
+    private byte[] fileBytes;
+    private int fileLen = 0;
+    private String dest;
+    private String src;
 
     public String getSender() {
         return sender;
@@ -49,5 +53,37 @@ public class Message implements Serializable {
 
     public void setMsgType(String msgType) {
         this.msgType = msgType;
+    }
+
+    public byte[] getFileBytes() {
+        return fileBytes;
+    }
+
+    public void setFileBytes(byte[] fileBytes) {
+        this.fileBytes = fileBytes;
+    }
+
+    public int getFileLen() {
+        return fileLen;
+    }
+
+    public void setFileLen(int fileLen) {
+        this.fileLen = fileLen;
+    }
+
+    public String getDest() {
+        return dest;
+    }
+
+    public void setDest(String dest) {
+        this.dest = dest;
+    }
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
     }
 }
